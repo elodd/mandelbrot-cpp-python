@@ -2,14 +2,19 @@
 
 [![tests](https://github.com/elodd/mandelbrot-cpp-python/actions/workflows/tests.yml/badge.svg)](https://github.com/elodd/mandelbrot-cpp-python/actions/workflows/tests.yml)
 
-A multithreaded C++ Mandelbrot calculation, drawn with Python and matplotlib, connected both ways with [pybind11](https://github.com/pybind/pybind11):
+The Mandelbrot set in two steps: **C++ calculates, Python draws.**
 
-| Direction | Entry point | How it works |
+1. **Calculate (C++):** `cpp/mandelbrot.hpp` computes the image on all CPU cores.
+2. **Draw (Python):** `python/plot.py` shades it and draws it with matplotlib.
+
+The image is a NumPy `float32` array that C++ writes into directly, so it reaches Python without a copy. [pybind11](https://github.com/pybind/pybind11) connects the two.
+
+There are two ways to run the pipeline. Both do the same thing; they differ only in which language starts it:
+
+| Started from | Entry point | How it works |
 |---|---|---|
-| **C++ → Python** | `build/mandelbrot` | A C++ program embeds Python, computes the image and hands it to `python/plot.py`. |
-| **Python → C++** | `python/draw.py` | A Python script imports the C++ module `mandelbrot`, computes the image and draws it with `python/plot.py`. |
-
-Both directions share one calculation (`cpp/mandelbrot.hpp`) and one drawing routine (`python/plot.py`). The image is a NumPy `float32` array that C++ writes into directly, so it crosses the language boundary without a copy.
+| **C++** | `build/mandelbrot` | A C++ program calculates the image, then embeds Python to call `python/plot.py`. |
+| **Python** | `python/draw.py` | A Python script calls the C++ calculation through the module `mandelbrot`, then calls `python/plot.py`. |
 
 ## Layout
 
