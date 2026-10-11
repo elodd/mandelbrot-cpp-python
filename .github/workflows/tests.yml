@@ -1,0 +1,42 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ["3.12"]
+
+    env:
+      MPLBACKEND: Agg
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install Python packages
+        run: python -m pip install pybind11 numpy matplotlib pytest
+
+      - name: Configure
+        run: cmake -B build -DPython_EXECUTABLE="$(which python)"
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: C++ tests + end-to-end
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Python tests
+        run: pytest -v
