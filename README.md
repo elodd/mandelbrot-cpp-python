@@ -1,5 +1,7 @@
 # mandelbrot: C++ ↔ Python
 
+[![tests](https://github.com/elodd/mandelbrot-cpp-python/actions/workflows/tests.yml/badge.svg)](https://github.com/elodd/mandelbrot-cpp-python/actions/workflows/tests.yml)
+
 The Mandelbrot set is computed in C++ and drawn in Python, in two directions:
 
 - **C++ → Python:** the C++ program `mandelbrot` computes the image and sends it to Python to draw.
